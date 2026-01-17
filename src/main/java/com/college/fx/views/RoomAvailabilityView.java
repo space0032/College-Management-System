@@ -2,6 +2,7 @@ package com.college.fx.views;
 
 import com.college.dao.TimetableDAO;
 import com.college.utils.DialogUtils;
+import com.college.utils.SessionManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -87,6 +88,12 @@ public class RoomAvailabilityView {
         Button manageBtn = new Button("Manage Rooms");
         manageBtn.setStyle("-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20;");
         manageBtn.setOnAction(e -> showManageRoomsDialog());
+        
+        // Only show Manage Rooms button if user has permission
+        if (!SessionManager.getInstance().hasPermission("MANAGE_ROOMS")) {
+            manageBtn.setVisible(false);
+            manageBtn.setManaged(false);
+        }
 
         controls.getChildren().addAll(searchField, new Label("Date:"), datePicker, new Label("Time:"), timeCombo, filterCombo, checkBtn, todayBtn, refreshBtn, manageBtn);
 
@@ -280,6 +287,12 @@ public class RoomAvailabilityView {
     }
 
     private void showManageRoomsDialog() {
+        // Check permission
+        if (!SessionManager.getInstance().hasPermission("MANAGE_ROOMS")) {
+            showAlert("Access Denied", "You don't have permission to manage rooms.");
+            return;
+        }
+        
         Dialog<Void> dialog = new Dialog<>();
         DialogUtils.styleDialog(dialog);
         dialog.setTitle("Manage Rooms");
