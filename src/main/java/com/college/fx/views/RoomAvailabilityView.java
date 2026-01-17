@@ -28,6 +28,11 @@ public class RoomAvailabilityView {
             "3:00-4:00", "4:00-5:00" };
 
     public VBox getView() {
+        // Check permission
+        if (!SessionManager.getInstance().hasPermission("ROOM_CHECK")) {
+            return new VBox(new Label("Access Denied: You do not have permission to view room availability."));
+        }
+
         VBox view = new VBox(20);
         view.setPadding(new Insets(25));
         view.getStyleClass().add("glass-pane");
@@ -75,27 +80,32 @@ public class RoomAvailabilityView {
         filterCombo.setPrefWidth(150);
 
         Button checkBtn = new Button("Check Availability");
-        checkBtn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20;");
+        checkBtn.setStyle(
+                "-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20;");
 
         Button todayBtn = new Button("Today's Schedule");
-        todayBtn.setStyle("-fx-background-color: #8b5cf6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20;");
+        todayBtn.setStyle(
+                "-fx-background-color: #8b5cf6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20;");
         todayBtn.setOnAction(e -> showTodaySchedule());
 
         Button refreshBtn = new Button("Refresh");
-        refreshBtn.setStyle("-fx-background-color: #22c55e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20;");
+        refreshBtn.setStyle(
+                "-fx-background-color: #22c55e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20;");
         refreshBtn.setOnAction(e -> refreshAllRoomsOverview());
 
         Button manageBtn = new Button("Manage Rooms");
-        manageBtn.setStyle("-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20;");
+        manageBtn.setStyle(
+                "-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20;");
         manageBtn.setOnAction(e -> showManageRoomsDialog());
-        
+
         // Only show Manage Rooms button if user has permission
         if (!SessionManager.getInstance().hasPermission("MANAGE_ROOMS")) {
             manageBtn.setVisible(false);
             manageBtn.setManaged(false);
         }
 
-        controls.getChildren().addAll(searchField, new Label("Date:"), datePicker, new Label("Time:"), timeCombo, filterCombo, checkBtn, todayBtn, refreshBtn, manageBtn);
+        controls.getChildren().addAll(searchField, new Label("Date:"), datePicker, new Label("Time:"), timeCombo,
+                filterCombo, checkBtn, todayBtn, refreshBtn, manageBtn);
 
         resultBox = new VBox(15);
         VBox.setVgrow(resultBox, Priority.ALWAYS);
@@ -206,9 +216,9 @@ public class RoomAvailabilityView {
             content.getChildren().addAll(new Separator(), occHeader, occFlow);
         }
 
-        if ((filter.equals("Available Only") && available.isEmpty()) || 
-            (filter.equals("Occupied Only") && occupied.isEmpty()) ||
-            (filter.equals("All Rooms") && available.isEmpty() && occupied.isEmpty())) {
+        if ((filter.equals("Available Only") && available.isEmpty()) ||
+                (filter.equals("Occupied Only") && occupied.isEmpty()) ||
+                (filter.equals("All Rooms") && available.isEmpty() && occupied.isEmpty())) {
             Label none = new Label("No rooms found matching the criteria.");
             none.setStyle("-fx-text-fill: #94a3b8; -fx-font-size: 14px;");
             content.getChildren().add(none);
@@ -220,7 +230,8 @@ public class RoomAvailabilityView {
         VBox.setVgrow(scroll, Priority.ALWAYS);
 
         resultBox.getChildren().add(scroll);
-        statsLabel.setText(String.format("Total: %d | Available: %d | Occupied: %d", allRooms.size(), available.size(), occupied.size()));
+        statsLabel.setText(String.format("Total: %d | Available: %d | Occupied: %d", allRooms.size(), available.size(),
+                occupied.size()));
     }
 
     private void showTodaySchedule() {
@@ -247,7 +258,8 @@ public class RoomAvailabilityView {
             slotBox.setStyle("-fx-background-color: rgba(30, 41, 59, 0.5); -fx-background-radius: 8;");
 
             Label timeLabel = new Label(timeSlot);
-            timeLabel.setStyle("-fx-text-fill: #3b82f6; -fx-font-weight: bold; -fx-font-size: 14px; -fx-min-width: 120;");
+            timeLabel.setStyle(
+                    "-fx-text-fill: #3b82f6; -fx-font-weight: bold; -fx-font-size: 14px; -fx-min-width: 120;");
 
             Label availLabel = new Label("Available: " + available);
             availLabel.setStyle("-fx-text-fill: #22c55e; -fx-font-weight: bold; -fx-font-size: 13px;");
@@ -292,7 +304,7 @@ public class RoomAvailabilityView {
             showAlert("Access Denied", "You don't have permission to manage rooms.");
             return;
         }
-        
+
         Dialog<Void> dialog = new Dialog<>();
         DialogUtils.styleDialog(dialog);
         dialog.setTitle("Manage Rooms");
@@ -316,7 +328,8 @@ public class RoomAvailabilityView {
         nameField.setPrefWidth(200);
 
         Button addBtn = new Button("Add Room");
-        addBtn.setStyle("-fx-background-color: #22c55e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20;");
+        addBtn.setStyle(
+                "-fx-background-color: #22c55e; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand; -fx-padding: 10 20;");
 
         addBox.getChildren().addAll(roomField, nameField, addBtn);
 
@@ -342,7 +355,8 @@ public class RoomAvailabilityView {
         actionCol.setCellFactory(param -> new TableCell<>() {
             private final Button deleteBtn = new Button("Delete");
             {
-                deleteBtn.setStyle("-fx-background-color: #ef4444; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 5 15;");
+                deleteBtn.setStyle(
+                        "-fx-background-color: #ef4444; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 5 15;");
                 deleteBtn.setOnAction(event -> {
                     String room = getTableView().getItems().get(getIndex());
                     Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
